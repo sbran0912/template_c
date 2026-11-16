@@ -1,0 +1,17 @@
+[
+  {
+    "label": "Debug: Snake (GCC / CodeLLDB)",
+    "adapter": "CodeLLDB",
+    "request": "launch",
+    "program": "${ZED_WORKTREE_ROOT}/bin/snake",
+    "cwd": "${ZED_WORKTREE_ROOT}",
+    "preLaunchTask": "Make: Build Debug",
+    "build": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "make debug"
+      ]
+    }
+  }
+]
