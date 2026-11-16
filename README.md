@@ -1,89 +1,83 @@
 # Build
 
-Voraussetzungen: CMake, Ninja, GLFW, OpenGL sowie beide Compiler (clang und gcc).
+Voraussetzungen: `make`, ein C17-Compiler (`clang`, alternativ `gcc`), GLFW sowie
+OpenGL.
 
-Es gibt zwei parallele Builds, die sich nicht gegenseitig stören:
-
-| Build       | Compiler | Ausgabe         | Artefakt-Verzeichnis |
-| ----------- | -------- | --------------- | -------------------- |
-| CMake/Ninja | clang    | `build/path3d`  | `build/`             |
-| Make        | gcc      | `bin/path3d`    | `bin/`, `obj/`       |
-
-## CMake + Ninja (clang)
-
-Aus dem Projektverzeichnis `path3d_c` heraus:
-
-```sh
-cmake -S . -B build -G Ninja
-cmake --build build
+```
+lib3d/   Bibliothek (glcore, lib3d, lib3d_util)
+app/     Anwendung (main.c, grid.c, snake.c)
 ```
 
-Das Binary liegt danach unter `build/path3d`.
+Es gibt genau einen Build: das `Makefile` baut die Objekte nach `obj/` und das
+Binary `bin/snake`.
 
-Nach Code-Änderungen genügt:
-
-```sh
-cmake --build build
-```
-
-Der Build-Typ ist standardmäßig `Release` (`-O2 -DNDEBUG`). Für einen
-Debug-Build mit vollen Debug-Infos (`-O0 -g3`):
+## Release-Build (Standard)
 
 ```sh
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-```
-
-Ein Wechsel des Build-Typs in einem bestehenden `build/` funktioniert über
-`cmake -S . -B build -DCMAKE_BUILD_TYPE=...`; im Zweifel `rm -rf build` und
-neu konfigurieren.
-
-Neu konfigurieren (`cmake -S . -B build -G Ninja`) muss man nur, wenn sich
-`CMakeLists.txt` ändert, neue Dateien hinzukommen oder `build/` gelöscht wurde.
-
-> Hinweis: Der Compiler ist in `CMakeLists.txt` fest auf `clang` gesetzt. Ein
-> bereits mit einem anderen Compiler konfiguriertes `build/` muss vorher
-> gelöscht werden (`rm -rf build`). Überschreiben lässt sich der Compiler mit
-> `-DCMAKE_C_COMPILER=...`.
-
-## Make (gcc)
-
-```sh
-make              # baut bin/path3d
-make run          # baut bei Bedarf und startet bin/path3d
+make              # baut bin/snake
+make -j$(nproc)   # parallel
+make run          # baut bei Bedarf und startet bin/snake
 make clean        # entfernt bin/ und obj/
 ```
 
-## Make (Targets für den CMake-Build)
+Die Flags sind `-Wall -Wextra -O2 -std=c17 -Ilib3d`, gelinkt wird gegen
+`-lglfw -lGL -lm`. Als Compiler ist `clang` voreingestellt; die Objekte landen
+pfadgetreu unter `obj/lib3d/...` und `obj/app/...`.
 
-Alternativ lässt sich der CMake/Ninja-Build (clang) auch über das Makefile anstoßen:
+Nach Code-Änderungen genügt ein erneutes `make` — gebaut wird nur, was sich
+geändert hat.
+
+## Debug-Build
 
 ```sh
-make cmake        # konfiguriert (Release) und baut build/path3d
-make cmake-debug  # konfiguriert (Debug) und baut build/path3d
-make cmake-init   # konfiguriert (cmake -S . -B build -G Ninja)
-make cmake-run    # baut und startet build/path3d
-make cmake-clean  # entfernt build/
+make debug
 ```
 
-`make` bleibt dabei weiterhin der gcc-Build nach `bin/path3d`.
+Das baut mit `-O0 -g3` statt `-O2`. Release und Debug nutzen dieselben
+Verzeichnisse (`obj/`, `bin/`), deshalb räumt `make debug` vorher auf. Ein
+Wechsel in die andere Richtung geht ebenfalls nur über `make clean`:
+
+```sh
+make clean && make
+```
+
+## Compiler wechseln
+
+Der Compiler lässt sich per `make`-Variable überschreiben:
+
+```sh
+make clean && make CC=gcc
+```
+
+Auch hier gilt: `make clean` vorher, weil die Objektdateien aus `obj/` sonst
+nicht neu gebaut werden.
 
 ## Starten
 
 ```sh
-./build/path3d     # clang-Build
-./bin/path3d       # gcc-Build
+./bin/snake
 ```
 
-Beide öffnen ein GLFW/OpenGL-Fenster und brauchen daher eine grafische Umgebung.
+Das Programm öffnet ein GLFW/OpenGL-Fenster und braucht daher eine grafische
+Umgebung.
 
-## Editor / clangd
+## compile_commands.json (clangd / IntelliSense)
 
-Der CMake-Build erzeugt `build/compile_commands.json` (clang). Damit clangd
-die Compile-Flags automatisch findet, verweist die Datei `.clangd` im
-Projektwurzelverzeichnis auf dieses Verzeichnis:
+Die Datei ist nicht eingecheckt (siehe `.gitignore`) und wird lokal erzeugt.
+Zwei Wege führen zum Ziel:
 
-```yaml
-CompileFlags:
-  CompilationDatabase: build
+```sh
+make init     # nutzt bear + das Makefile (benötigt bear)
+./init.sh     # reines Python3-Skript, kein bear nötig
 ```
+
+`make init` räumt vorher auf und schreibt `compile_commands.json` ins
+Projektwurzelverzeichnis. clangd findet die Datei dort automatisch, ein
+zusätzlicher Eintrag in einer `.clangd` ist nicht nötig.
+
+## Editor
+
+Die Tasks in [.vscode/tasks.json](.vscode/tasks.json) und
+[.zed/tasks.json](.zed/tasks.json) rufen direkt die Make-Ziele auf
+(`make`, `make debug`, `make run`, `make clean`, `make init`). Die
+VS-Code-Launch-Konfigurationen debuggen `bin/snake` mit gdb.
