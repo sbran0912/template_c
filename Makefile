@@ -1,7 +1,7 @@
 # Build mit gcc oder clang
-CC = clang  # bzw. gcc
-CFLAGS = -Wall -Wextra -O2 -std=c17 -Ilib3d
-CFLAGS_DEBUG = -Wall -Wextra -O0 -g3 -std=c17 -Ilib3d
+CC = clang-22  # bzw. gcc
+CFLAGS = -Wall -Wextra -O2 -std=c23 -Ilib3d
+CFLAGS_DEBUG = -Wall -Wextra -O0 -g3 -std=c23 -Ilib3d
 LDFLAGS = -lglfw -lGL -lm
 
 APPNAME = snake
