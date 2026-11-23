@@ -2,10 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "gcc: Debug Snake",
+      "name": "gcc: Debug Vehicle",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bin/snake",
+      "program": "${workspaceFolder}/bin/vehicle",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -23,10 +23,10 @@
       "preLaunchTask": "gcc: build (Debug)"
     },
     {
-      "name": "gcc: Run Snake (Release)",
+      "name": "gcc: Run Vehicle (Release)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bin/snake",
+      "program": "${workspaceFolder}/bin/vehicle",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

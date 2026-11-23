@@ -1,26 +1,26 @@
 # Build
 
-Voraussetzungen: `make`, ein C17-Compiler (`clang`, alternativ `gcc`), GLFW sowie
+Voraussetzungen: `make`, ein C23-Compiler (`clang`, alternativ `gcc`), GLFW sowie
 OpenGL.
 
 ```
 lib3d/   Bibliothek (glcore, lib3d, lib3d_util)
-app/     Anwendung (main.c, grid.c, snake.c)
+app/     Anwendung (main.c, vehicle.c)
 ```
 
 Es gibt genau einen Build: das `Makefile` baut die Objekte nach `obj/` und das
-Binary `bin/snake`.
+Binary `bin/vehicle`.
 
 ## Release-Build (Standard)
 
 ```sh
-make              # baut bin/snake
+make              # baut bin/vehicle
 make -j$(nproc)   # parallel
-make run          # baut bei Bedarf und startet bin/snake
+make run          # baut bei Bedarf und startet bin/vehicle
 make clean        # entfernt bin/ und obj/
 ```
 
-Die Flags sind `-Wall -Wextra -O2 -std=c17 -Ilib3d`, gelinkt wird gegen
+Die Flags sind `-Wall -Wextra -O2 -std=c23 -Ilib3d`, gelinkt wird gegen
 `-lglfw -lGL -lm`. Als Compiler ist `clang` voreingestellt; die Objekte landen
 pfadgetreu unter `obj/lib3d/...` und `obj/app/...`.
 
@@ -55,7 +55,7 @@ nicht neu gebaut werden.
 ## Starten
 
 ```sh
-./bin/snake
+./bin/vehicle
 ```
 
 Das Programm öffnet ein GLFW/OpenGL-Fenster und braucht daher eine grafische
@@ -80,4 +80,4 @@ zusätzlicher Eintrag in einer `.clangd` ist nicht nötig.
 Die Tasks in [.vscode/tasks.json](.vscode/tasks.json) und
 [.zed/tasks.json](.zed/tasks.json) rufen direkt die Make-Ziele auf
 (`make`, `make debug`, `make run`, `make clean`, `make init`). Die
-VS-Code-Launch-Konfigurationen debuggen `bin/snake` mit gdb.
+VS-Code-Launch-Konfigurationen debuggen `bin/vehicle` mit gdb.

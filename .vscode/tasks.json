@@ -64,7 +64,7 @@
     {
       "label": "gcc: run",
       "type": "shell",
-      "command": "./bin/snake",
+      "command": "./bin/vehicle",
       "dependsOn": "gcc: build (Release)",
       "options": {
         "cwd": "${workspaceFolder}"
